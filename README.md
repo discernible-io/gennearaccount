@@ -1,7 +1,7 @@
 ![cableguard logo banner](./banner.png)
 
-# Cableguard TOOL for configuring Cableguard TUN
-This supplies the main userspace tooling for using and configuring WireGuard tunnels, with two extra options 'genaccount' to generate NEAR protocol implicit account json files with the account ID and key pair that are stored in the ~/.near-credentials/$BLOCKCHAIN_ENV directory
+# NEAR implicit account generator
+This repository is focused on generating NEAR protocol implicit account JSON files with the account ID and key pair, stored in the `~/.near-credentials/$BLOCKCHAIN_ENV` directory.
 
 ## License
 This project is released under the [GPLv2](COPYING).
@@ -15,20 +15,22 @@ From the cgtools directory where the source code is downloaded
 - sudo make -C ./src install
 
 With the command
-- wg --version
+- nearaccountgenerator --help
 you should get
-- wireguard-tools v cableguard 0.90.53:
+- the account generator usage and `genaccount` command
 
 ##How to install form Deb package
 wget https://cableguard.fra1.digitaloceanspaces.com/cgtools_00.90.53_amd64.deb
 sudo apt install ./cgtools_00.90.53_amd64.deb
 
 ## How to Use
-You need to set the blockchain network:
-export BLOCKCHAIN_ENV=testnet (for testnet, mainnet for mainnet)
-You may want to add this line to your .bashrc file
+Set the blockchain network first:
+`export BLOCKCHAIN_ENV=testnet` (or `mainnet`)
 
-run wg help to display options. The options genaccount and subdomain-peer are not found in defaults wg from Wireguard
+Then run:
+`nearaccountgenerator genaccount`
+
+If you run `nearaccountgenerator` with no arguments, it defaults to generating an account.
 
 # Cableguard Ecosystem
     Cableguard RODITVPN: RODiT and VPN manager

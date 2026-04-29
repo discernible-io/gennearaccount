@@ -28,13 +28,17 @@ int ed25519_create_seed(unsigned char *seed) {
     CryptReleaseContext(prov, 0);
 #else
     FILE *f = fopen("/dev/urandom", "rb");
+    size_t bytes_read;
 
     if (f == NULL) {
         return 1;
     }
 
-    fread(seed, 1, 32, f);
+    bytes_read = fread(seed, 1, 32, f);
     fclose(f);
+    if (bytes_read != 32) {
+        return 1;
+    }
 #endif
 
     return 0;

@@ -7,17 +7,5 @@
 #define SUBCOMMANDS_H
 
 extern const char *PROG_NAME;
-int show_main(int argc, const char *argv[]);
-int showconf_main(int argc, const char *argv[]);
-int set_main(int argc, const char *argv[]);
-int setconf_main(int argc, const char *argv[]);
-int genkey_main(int argc, const char *argv[]);
-int pubkey_main(int argc, const char *argv[]);
 int genaccount_main(int argc, const char *argv[]);
-/// @brief 
-/// @param argc 
-/// @param argv 
-/// @return 
-
-
 #endif

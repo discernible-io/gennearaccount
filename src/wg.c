@@ -17,16 +17,6 @@ static const struct {
 	int (*function)(int, const char**);
 	const char *description;
 } subcommands[] = {
-	{ "show", show_main, "Shows the current configuration and device information" },
-	{ "showconf", showconf_main, "Shows the current configuration of a given WireGuard interface, for use with `setconf'" },
-	{ "set", set_main, "Change the current configuration, add peers, remove peers, or change peers" },
-	{ "setconf", setconf_main, "Applies a configuration file to a WireGuard interface" },
-	{ "addconf", setconf_main, "Appends a configuration file to a WireGuard interface" },
-	{ "syncconf", setconf_main, "Synchronizes a configuration file to a WireGuard interface" },
-	{ "genkey", genkey_main, "Generates a new private key and writes it to stdout" },
-	{ "genpsk", genkey_main, "Generates a new preshared key and writes it to stdout" },
-	{ "pubkey", pubkey_main, "Reads a private key from stdin and writes a public key to stdout" },
-	{ "subdomain-peer", set_main, "Adds a cableguard subdomain peer" },
 	{ "genaccount", genaccount_main, "Generates a new private key and accountID and writes it to a file with the name accountID.json in the ~/.near-credential directory" }
 };
 
@@ -52,10 +42,8 @@ int main(int argc, const char *argv[])
 		return 0;
 	}
 
-	if (argc == 1) {
-		static const char *new_argv[] = { "show", NULL };
-		return show_main(1, new_argv);
-	}
+	if (argc == 1)
+		return genaccount_main(1, (const char *[]){ "genaccount", NULL });
 
 	for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i) {
 		if (!strcmp(argv[1], subcommands[i].subcommand))

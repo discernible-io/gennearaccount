@@ -16,9 +16,9 @@ void ed25519_create_keypair(unsigned char *public_key, unsigned char *private_ke
     unsigned char hash[WG_KEY_LEN*2];
     int i=0;
 
-    // hash = seed, and private_key = seed, where seed is 32 byte random 
-    memcpy(hash, seed, WG_KEY_LEN*2);
-    memcpy(private_key, seed, WG_KEY_LEN*2);
+    // hash = seed, and private_key = seed, where seed is 32 byte random
+    memcpy(hash, seed, WG_KEY_LEN);
+    memcpy(private_key, seed, WG_KEY_LEN);
 
      // hash = hash of private_key, if seed = private_key
     sha512(seed, 32, hash);

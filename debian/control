@@ -12,5 +12,5 @@ Rules-Requires-Root: no
 Package: cgtools
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: wg tools that selects vpn servers and creates NEAR key pairs
- with one extra option 'genaccount' to generate NEAR protocol implicit account json files with the account
+Description: NEAR implicit account generator CLI
+ standalone executable to generate NEAR protocol implicit account JSON files with account id and keypair.
