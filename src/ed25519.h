@@ -6,6 +6,11 @@
 
 #include <stddef.h>
 
+/* Ed25519 secret key seed length (bytes). */
+#ifndef ED25519_KEY_LEN
+#define ED25519_KEY_LEN 32
+#endif
+
 #if defined(_WIN32)
     #if defined(ED25519_BUILD_DLL)
         #define ED25519_DECLSPEC __declspec(dllexport)

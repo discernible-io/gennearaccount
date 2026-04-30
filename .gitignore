@@ -19,5 +19,7 @@ maint/
 .vscode/
 account
 dev-account
+gennearaccount
+nearaccountgenerator
 *.tar.xz
 *.dsc

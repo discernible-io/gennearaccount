@@ -6,22 +6,18 @@
 #include "ge.h"
 #include <string.h>
 
-#ifndef WG_KEY_LEN
-#define WG_KEY_LEN 32
-#endif
-
 void ed25519_create_keypair(unsigned char *public_key, unsigned char *private_key, const unsigned char *seed) {
     ge_p3 A;
 
-    unsigned char hash[WG_KEY_LEN*2];
+    unsigned char hash[ED25519_KEY_LEN*2];
     int i=0;
 
     // hash = seed, and private_key = seed, where seed is 32 byte random
-    memcpy(hash, seed, WG_KEY_LEN);
-    memcpy(private_key, seed, WG_KEY_LEN);
+    memcpy(hash, seed, ED25519_KEY_LEN);
+    memcpy(private_key, seed, ED25519_KEY_LEN);
 
      // hash = hash of private_key, if seed = private_key
-    sha512(seed, 32, hash);
+    sha512(seed, ED25519_KEY_LEN, hash);
 
     // Clamp the hash
     hash[0] &= 248;

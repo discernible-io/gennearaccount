@@ -1,5 +1,5 @@
-cgtools (00.90.53) UNRELEASED; urgency=medium
+gennearaccount (1.0) UNRELEASED; urgency=medium
 
-  * Initial Release.
+  * Package renamed to gennearaccount; version 1.0.
 
- -- Vicente Aceituno Canal <vpn@cableguard.org>  Sun, 26 May 2024 20:33:39 +0200
+ -- Vicente Aceituno Canal <vpn@cableguard.org>  Wed, 30 Apr 2026 12:00:00 +0000

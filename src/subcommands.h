@@ -7,5 +7,5 @@
 #define SUBCOMMANDS_H
 
 extern const char *PROG_NAME;
-int genaccount_main(int argc, const char *argv[]);
+int gennearaccount_main(int argc, const char *argv[]);
 #endif

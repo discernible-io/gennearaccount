@@ -6,8 +6,8 @@ CC ?= cc
 CFLAGS ?= -O3
 CFLAGS += -std=gnu99 -Wall -Wextra -MMD -MP
 
-TARGET := nearaccountgenerator
-SOURCES := wg.c genaccount.c keypair.c seed.c ge.c fe.c sha512.c
+TARGET := gennearaccount
+SOURCES := main.c gennearaccount.c keypair.c seed.c ge.c fe.c sha512.c
 OBJECTS := $(SOURCES:.c=.o)
 
 all: $(TARGET)

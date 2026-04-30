@@ -1,43 +1,49 @@
-![cableguard logo banner](./banner.png)
-
 # NEAR implicit account generator
-This repository is focused on generating NEAR protocol implicit account JSON files with the account ID and key pair, stored in the `~/.near-credentials/$BLOCKCHAIN_ENV` directory.
+
+The `gennearaccount` tool creates a NEAR implicit account: it writes a JSON key file and prints the new account id on standard output.
 
 ## License
+
 This project is released under the [GPLv2](COPYING).
-More information may be found at [WireGuard.com](https://www.wireguard.com/).**
 
-## How to Install from Source
-You may need to install libssl-dev with: sudo apt-get install libssl-dev
+## How to install from source
 
-From the cgtools directory where the source code is downloaded
-- make -C ./src -j$(nproc)
-- sudo make -C ./src install
+From this repository’s root (the `gennearaccount` directory):
 
-With the command
-- nearaccountgenerator --help
-you should get
-- the account generator usage and `genaccount` command
+- `make -C ./src -j$(nproc)`
+- `sudo make -C ./src install` (installs `gennearaccount` under `$(PREFIX)/bin`, default `/usr/bin`)
 
-##How to install form Deb package
-wget https://cableguard.fra1.digitaloceanspaces.com/cgtools_00.90.53_amd64.deb
-sudo apt install ./cgtools_00.90.53_amd64.deb
+The build only needs a C compiler and standard headers; no extra crypto libraries are required.
 
-## How to Use
-Set the blockchain network first:
-`export BLOCKCHAIN_ENV=testnet` (or `mainnet`)
+### Debian package
 
-Then run:
-`nearaccountgenerator genaccount`
+From the same root:
 
-If you run `nearaccountgenerator` with no arguments, it defaults to generating an account.
+```bash
+dpkg-buildpackage -us -uc -b
+```
 
-# Cableguard Ecosystem
-    Cableguard RODITVPN: RODiT and VPN manager
-    Cableguard TOOLS: local VPN tunnel configuration
-    Cableguard TUN: VPN tunnels
-    Cableguard FORGE: RODiT minter
+The binary package is written to the parent directory (e.g. `../gennearaccount_1.0_amd64.deb`).
 
+## Usage
+### Top-level
 
----
-<sub><sub><sub><sub>WireGuard is a registered trademark of Jason A. Donenfeld. Cableguard is not sponsored or endorsed by Jason A. Donenfeld.</sub></sub></sub></sub>
+| Command | Behavior |
+|--------|----------|
+| `gennearaccount --help` (or `-h`, `help`) | Lists subcommands. |
+| `gennearaccount --version` (or `-v`, `version`) | Prints version string. |
+- **Optional `DIRECTORY`**: where to write `<implicit_account_id>.json`. If omitted, the current directory (`.`) is used.
+- **Directory creation**: if `DIRECTORY` does not exist, a single directory is created (`mkdir` with mode `0755`). Parent directories are not created for you (not a full `mkdir -p`).
+- **Aside from `--help` / `-h`**, the only optional argument is `DIRECTORY`.
+
+### Output
+- **Standard output**: one line after success, for example:  
+  `NEAR implicit account created: f6cf27149c92207d46a9fd9b3ddf67e62367f180a583af0ab5211f6ec3e9cf47`  
+  The hex string is the implicit account id (64 hex characters, same as in the JSON file).
+
+- **File**: `DIRECTORY/<implicit_account_id>.json` containing a single JSON object with:
+  - `implicit_account_id` — hex-encoded public key (implicit account id)
+  - `public_key` — `ed25519:` + Base58-encoded public key
+  - `private_key` — `ed25519:` + Base58-encoded extended secret key
+
+Errors and usage messages go to **stderr**.

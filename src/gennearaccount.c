@@ -40,10 +40,56 @@
 #endif
 #endif
 
-#include "curve25519.h"
-#include "encoding.h"
 #include "subcommands.h"
 #include "ed25519.h"
+
+extern const char *PROG_NAME;
+
+static void trim_trailing_slashes(char *path)
+{
+	size_t len = strlen(path);
+
+	while (len > 1 && path[len - 1] == '/')
+		path[--len] = '\0';
+}
+
+static void gennearaccount_usage(FILE *f)
+{
+	fprintf(f, "Usage: %s gennearaccount [DIRECTORY]\n\n", PROG_NAME);
+	fprintf(f, "Write implicit account JSON to DIRECTORY/<implicit_account_id>.json.\n");
+	fprintf(f, "If DIRECTORY is omitted, the current directory (.) is used.\n\n");
+	fprintf(f, "Options:\n");
+	fprintf(f, "  -h, --help    Show this help\n");
+}
+
+static bool ensure_output_directory(char *dir_path)
+{
+	struct stat st;
+
+	trim_trailing_slashes(dir_path);
+	if (!*dir_path) {
+		strcpy(dir_path, ".");
+		return true;
+	}
+
+	if (stat(dir_path, &st) == 0) {
+		if (!S_ISDIR(st.st_mode)) {
+			fprintf(stderr, "Error: `%s' is not a directory.\n", dir_path);
+			return false;
+		}
+		return true;
+	}
+	if (errno != ENOENT) {
+		perror("stat");
+		return false;
+	}
+	if (mkdir(dir_path, 0755) != 0) {
+		fprintf(stderr, "Error: cannot create directory `%s': ", dir_path);
+		perror(NULL);
+		return false;
+	}
+	return true;
+}
 
 #ifndef _WIN32
 static inline bool __attribute__((__warn_unused_result__)) get_random_bytes(uint8_t *out, size_t len)
@@ -152,26 +198,40 @@ bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz)
  * Copyright (C) 2023 Vicente Aceituno Canal <vicente@cableguard.org>. All Rights Reserved.
  */
 
-int genaccount_main(int argc, const char *argv[])
+int gennearaccount_main(int argc, const char *argv[])
 {
-	uint8_t  seed_hex[WG_KEY_LEN];
-	uint8_t  extended_hex[WG_KEY_LEN*2];
-	unsigned char private_hexkey[WG_KEY_LEN*2];
-	unsigned char public_hexkey[WG_KEY_LEN];
-	char public_base58key[WG_KEY_LEN*2];
-	char extended_base58[WG_KEY_LEN*4];
-	size_t publickeylenbase58ptr = WG_KEY_LEN*2;
-	size_t privatekeylenbase58ptr = WG_KEY_LEN*4;
-	char public_hexkey_asstring[WG_KEY_LEN * 2 + 1]; // +1 for null terminator
-	char blockchain_env[PATH_MAX];
+	uint8_t  seed_hex[ED25519_KEY_LEN];
+	uint8_t  extended_hex[ED25519_KEY_LEN*2];
+	unsigned char private_hexkey[ED25519_KEY_LEN*2];
+	unsigned char public_hexkey[ED25519_KEY_LEN];
+	char public_base58key[ED25519_KEY_LEN*2];
+	char extended_base58[ED25519_KEY_LEN*4];
+	size_t publickeylenbase58ptr = ED25519_KEY_LEN*2;
+	size_t privatekeylenbase58ptr = ED25519_KEY_LEN*4;
+	char public_hexkey_asstring[ED25519_KEY_LEN * 2 + 1]; // +1 for null terminator
+	char dir_path[PATH_MAX];
 	char file_path[PATH_MAX];
-	char home_dir[PATH_MAX];
 	struct stat stat;
 
-	if (argc != 1) {
-		fprintf(stderr, "Usage: %s %s\n", PROG_NAME, argv[0]);
+	if (argc == 2 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))) {
+		gennearaccount_usage(stdout);
+		return 0;
+	}
+	if (argc > 2) {
+		gennearaccount_usage(stderr);
 		return 1;
 	}
+	if (argc == 2) {
+		if (strlen(argv[1]) >= sizeof(dir_path)) {
+			fprintf(stderr, "Error: directory path is too long.\n");
+			return 1;
+		}
+		memcpy(dir_path, argv[1], strlen(argv[1]) + 1);
+	} else {
+		strcpy(dir_path, ".");
+	}
+	if (!ensure_output_directory(dir_path))
+		return 1;
 
 	if (!fstat(STDOUT_FILENO, &stat) && S_ISREG(stat.st_mode) && stat.st_mode & S_IRWXO)
 		fputs("Warning: writing to world accessible file.\nConsider setting the umask to 077 and trying again.\n", stderr);
@@ -181,36 +241,21 @@ int genaccount_main(int argc, const char *argv[])
 		return 1;
 	}
 
-	if (!strcmp(argv[0], "genaccount"))
-		ed25519_create_keypair(public_hexkey,private_hexkey,(const unsigned char *)seed_hex);
+	ed25519_create_keypair(public_hexkey, private_hexkey, (const unsigned char *)seed_hex);
 	
-	memcpy(extended_hex, seed_hex, WG_KEY_LEN);
-    memcpy(extended_hex + WG_KEY_LEN , public_hexkey, WG_KEY_LEN);
-	b58enc(extended_base58, &privatekeylenbase58ptr, extended_hex, WG_KEY_LEN*2);
-	b58enc(public_base58key, &publickeylenbase58ptr, public_hexkey, WG_KEY_LEN);
+	memcpy(extended_hex, seed_hex, ED25519_KEY_LEN);
+    memcpy(extended_hex + ED25519_KEY_LEN , public_hexkey, ED25519_KEY_LEN);
+	b58enc(extended_base58, &privatekeylenbase58ptr, extended_hex, ED25519_KEY_LEN*2);
+	b58enc(public_base58key, &publickeylenbase58ptr, public_hexkey, ED25519_KEY_LEN);
 
-	// This works for Linux only for the time being
-	if (getenv("HOME") == NULL) {
-		fprintf(stderr, "Error: Unable to determine home directory.\n");
-		return 1;
-	} else {
-		strcpy(home_dir, getenv("HOME"));
-	}
-
-	if (getenv("BLOCKCHAIN_ENV") != NULL) {
-    	strcpy(blockchain_env, getenv("BLOCKCHAIN_ENV"));
-	} else if (getenv("USERPROFILE") != NULL) {
-   		strcpy(blockchain_env, getenv("USERPROFILE"));
-	} else {
-    	fprintf(stderr, "Error: Unable to determine BLOCKCHAIN_ENV: mainnet/testnet?.\n");
-    return 1;
-	}
-
-	for (int i = 0; i < WG_KEY_LEN; i++) {
+	for (int i = 0; i < ED25519_KEY_LEN; i++) {
     	sprintf(&public_hexkey_asstring[i * 2], "%02x", public_hexkey[i]);
 	}
-	public_hexkey_asstring[WG_KEY_LEN * 2] = '\0';
-	snprintf(file_path, sizeof(file_path), "%s/.near-credentials/%s/%s.json", home_dir, blockchain_env, public_hexkey_asstring);
+	public_hexkey_asstring[ED25519_KEY_LEN * 2] = '\0';
+	if (snprintf(file_path, sizeof(file_path), "%s/%s.json", dir_path, public_hexkey_asstring) >= (int)sizeof(file_path)) {
+		fprintf(stderr, "Error: output path is too long.\n");
+		return 1;
+	}
 
 	FILE *file = fopen(file_path, "w");
     if (file == NULL) {
@@ -218,11 +263,11 @@ int genaccount_main(int argc, const char *argv[])
         return 1;
     }
     fprintf(file,"{\"implicit_account_id\":\"");
-    for (int i = 0; i < WG_KEY_LEN; i++) {
+    for (int i = 0; i < ED25519_KEY_LEN; i++) {
         fprintf(file, "%02x", public_hexkey[i]);
         }
     fprintf(file,"\",\"public_key\":\"ed25519:%s\",\"private_key\":\"ed25519:%s\"}\n",public_base58key,extended_base58);
-	printf("Info: You need to initialize the NEAR account generated before you can use it\n");
+	printf("NEAR implicit account created: %s\n", public_hexkey_asstring);
 
     fclose(file);
 

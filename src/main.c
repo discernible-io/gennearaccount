@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0 OR MIT
 /*
- * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
+ * NEAR implicit account CLI (`gennearaccount`).
  */
 
 #include <stddef.h>
@@ -17,7 +17,7 @@ static const struct {
 	int (*function)(int, const char**);
 	const char *description;
 } subcommands[] = {
-	{ "genaccount", genaccount_main, "Generates a new private key and accountID and writes it to a file with the name accountID.json in the ~/.near-credential directory" }
+	{ "gennearaccount", gennearaccount_main, "Writes implicit account JSON to DIRECTORY/<account_id>.json (default DIRECTORY: .)" }
 };
 
 static void show_usage(FILE *file)
@@ -34,7 +34,7 @@ int main(int argc, const char *argv[])
 	PROG_NAME = argv[0];
 
 	if (argc == 2 && (!strcmp(argv[1], "-v") || !strcmp(argv[1], "--version") || !strcmp(argv[1], "version"))) {
-		printf("wireguard-tools v %s - https://github.com/alanesmizi/cableguard-wgtools\n", WIREGUARD_TOOLS_VERSION);
+		printf("gennearaccount %s\n", GENNEARACCOUNT_VERSION);
 		return 0;
 	}
 	if (argc == 2 && (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help") || !strcmp(argv[1], "help"))) {
@@ -43,7 +43,7 @@ int main(int argc, const char *argv[])
 	}
 
 	if (argc == 1)
-		return genaccount_main(1, (const char *[]){ "genaccount", NULL });
+		return gennearaccount_main(1, (const char *[]){ "gennearaccount", NULL });
 
 	for (size_t i = 0; i < sizeof(subcommands) / sizeof(subcommands[0]); ++i) {
 		if (!strcmp(argv[1], subcommands[i].subcommand))
