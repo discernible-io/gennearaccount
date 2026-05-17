@@ -1,10 +1,10 @@
 Source: gennearaccount
 Section: unknown
 Priority: optional
-Maintainer: Vicente Aceituno Canal <vpn@cableguard.org>
+Maintainer: Discernible IO <vpn@discernible.io>
 Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.0
-Homepage: <https://www.cableguard.org>
+Homepage: <https://www.discernible.io>
 Rules-Requires-Root: no
 
 Package: gennearaccount

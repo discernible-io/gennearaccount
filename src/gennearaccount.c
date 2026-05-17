@@ -22,7 +22,7 @@
 // SPDX-License-Identifier: GPL-2.0 OR MIT
 /*
  * Copyright (C) 2015-2020 Jason A. Donenfeld <Jason@zx2c4.com>. All Rights Reserved.
- * Copyright (C) 2023 Vicente Aceituno Canal <vicente@cableguard.org>. All Rights Reserved.
+ * Copyright (C) 2023 Discernible IO <discernible@discernible.io>. All Rights Reserved.
  */
 
 // longest path for the output file
@@ -195,7 +195,7 @@ bool b58enc(char *b58, size_t *b58sz, const void *data, size_t binsz)
 
 // SPDX-License-Identifier: GPL-2.0 OR MIT
 /*
- * Copyright (C) 2023 Vicente Aceituno Canal <vicente@cableguard.org>. All Rights Reserved.
+ * Copyright (C) 2023 Discernible IO <discernible@discernible.io>. All Rights Reserved.
  */
 
 int gennearaccount_main(int argc, const char *argv[])
