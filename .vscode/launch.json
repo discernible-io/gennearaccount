@@ -8,10 +8,10 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/mihal/cableguard-wgtools/src/wg",
-            "args": ["genaccount"],
+            "program": "/home/dedalo43/gennearaccount/src/gennearaccount",
+            "args": [],
             "stopAtEntry": false,
-            "cwd": "/home/mihal/cableguard-wgtools/src/",
+            "cwd": "/home/dedalo43/gennearaccount/src/",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -32,7 +32,7 @@
             "type": "gdb",
             "request": "launch",
             "name": "Debug",
-            "program": "~/mihal/cableguard-tools/src/wg",
+            "program": "/home/dedalo43/gennearaccount/src/gennearaccount",
         }
     ]
 }
