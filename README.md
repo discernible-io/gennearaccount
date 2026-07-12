@@ -1,12 +1,26 @@
 # NEAR implicit account generator
 
-The `gennearaccount` tool creates a NEAR implicit account: it writes a JSON key file and prints the new account id on standard output.
+![banner](banner.png)
 
-## License
+**Step 1 of [IdentyClaw](https://www.discernible.io/#enroll) enrollment:** create a NEAR implicit account with this CLI, then mint a Passport at [purchase.identyclaw.com](https://purchase.identyclaw.com).
 
-This project is released under the [GPLv2](COPYING).
+The `gennearaccount` tool writes a JSON key file and prints the new implicit account id on standard output.
 
-## How to install from source
+> **OpenClaw alternative:** OpenClaw operators can use [`openclaw-identyclaw-plugin`](https://github.com/discernible-io/openclaw-identyclaw-plugin) `generate-near-account` instead — same JSON credential layout.
+
+> **Production deploy:** [`identyclaw-agents`](https://github.com/discernible-io/identyclaw-agents) runs account generation inside the container via `./identyclaw.sh generate-near-account`.
+
+## Install
+
+### From GitHub Releases
+
+Download the `.deb` package from [GitHub Releases](https://github.com/discernible-io/gennearaccount/releases) (asset name `gennearaccount_*_amd64.deb`), then install:
+
+```bash
+sudo dpkg -i gennearaccount_*_amd64.deb
+```
+
+### From source
 
 From this repository’s root (the `gennearaccount` directory):
 
@@ -15,35 +29,59 @@ From this repository’s root (the `gennearaccount` directory):
 
 The build only needs a C compiler and standard headers; no extra crypto libraries are required.
 
-### Debian package
-
-From the same root:
+#### Debian package (build your own)
 
 ```bash
 dpkg-buildpackage -us -uc -b
 ```
 
-The binary package is written to the parent directory (e.g. `../gennearaccount_1.0_amd64.deb`).
+The binary package is written to the parent directory (e.g. `../gennearaccount_2026.05.17_amd64.deb`).
 
 ## Usage
-### Top-level
 
 | Command | Behavior |
 |--------|----------|
 | `gennearaccount --help` (or `-h`, `help`) | Lists subcommands. |
 | `gennearaccount --version` (or `-v`, `version`) | Prints version string. |
+| `gennearaccount [DIRECTORY]` | Writes `<implicit_account_id>.json` under `DIRECTORY`. |
+
 - **Optional `DIRECTORY`**: where to write `<implicit_account_id>.json`. If omitted, the current directory (`.`) is used.
 - **Directory creation**: if `DIRECTORY` does not exist, a single directory is created (`mkdir` with mode `0755`). Parent directories are not created for you (not a full `mkdir -p`).
-- **Aside from `--help` / `-h`**, the only optional argument is `DIRECTORY`.
 
 ### Output
-- **Standard output**: one line after success, for example:  
-  `NEAR implicit account created: f6cf27149c92207d46a9fd9b3ddf67e62367f180a583af0ab5211f6ec3e9cf47`  
-  The hex string is the implicit account id (64 hex characters, same as in the JSON file).
 
-- **File**: `DIRECTORY/<implicit_account_id>.json` containing a single JSON object with:
-  - `implicit_account_id` — hex-encoded public key (implicit account id)
-  - `public_key` — `ed25519:` + Base58-encoded public key
-  - `private_key` — `ed25519:` + Base58-encoded extended secret key
+- **Standard output**: one line after success, for example:
+
+  `NEAR implicit account created: f6cf27149c92207d46a9fd9b3ddf67e62367f180a583af0ab5211f6ec3e9cf47`
+
+  The hex string is the implicit account id (64 hex characters, same as in the JSON file). The private key is never printed.
+
+- **File**: `DIRECTORY/<implicit_account_id>.json` — see [JSON compatibility](#json-compatibility) below.
 
 Errors and usage messages go to **stderr**.
+
+## JSON compatibility
+
+The credential file is a single JSON object with these fields — the same layout used by [`openclaw-identyclaw-plugin`](https://github.com/discernible-io/openclaw-identyclaw-plugin) and [`clienttest-idc`](https://github.com/discernible-io/clienttest-idc):
+
+| Field | Description |
+|-------|-------------|
+| `implicit_account_id` | Hex-encoded public key (64 characters); NEAR implicit account id |
+| `public_key` | `ed25519:` + Base58-encoded public key |
+| `private_key` | `ed25519:` + Base58-encoded extended secret key |
+
+Example filename: `f6cf27149c92207d46a9fd9b3ddf67e62367f180a583af0ab5211f6ec3e9cf47.json`.
+
+## Security
+
+- **File permissions:** restrict credential JSON to the owning user — `chmod 0600` on each file (and `umask 077` before running if you want new files created that way). Never leave keys world- or group-readable.
+- **Git and backups:** never commit `*.json` credential files or paste private keys into chat, tickets, or CI logs. Add credential directories to `.gitignore`.
+- **Private key on disk only:** stdout reports the implicit account id; the extended secret key exists only in the JSON file on disk.
+
+## License
+
+This project is released under the [GPLv2](COPYING).
+
+---
+
+[discernible.io](https://www.discernible.io) · [sdk/verify-hola](https://github.com/discernible-io/sdk/tree/main/verify-hola) · [enrollment guide](https://www.discernible.io/#enroll)
