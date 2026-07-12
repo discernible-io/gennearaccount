@@ -62,7 +62,7 @@ Errors and usage messages go to **stderr**.
 
 ## JSON compatibility
 
-The credential file is a single JSON object with these fields — the same layout used by [`openclaw-identyclaw-plugin`](https://github.com/discernible-io/openclaw-identyclaw-plugin) and [`clienttest-idc`](https://github.com/discernible-io/clienttest-idc):
+The credential file is a single JSON object with these fields — the same layout used by [`openclaw-identyclaw-plugin`](https://github.com/discernible-io/openclaw-identyclaw-plugin) `generate-near-account`:
 
 | Field | Description |
 |-------|-------------|

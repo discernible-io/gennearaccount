@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Discernible IO <vpn@discernible.io>
 Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.0
-Homepage: <https://www.discernible.io>
+Homepage: https://www.discernible.io/#enroll
 Rules-Requires-Root: no
 
 Package: gennearaccount

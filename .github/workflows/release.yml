@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-deb:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debhelper build-essential
+
+      - name: Build .deb package
+        run: dpkg-buildpackage -us -uc -b
+
+      - name: Locate .deb artifact
+        id: deb
+        run: |
+          deb="$(ls -1 ../*.deb | grep -v dbgsym | head -1)"
+          echo "path=${deb}" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename "${deb}")" >> "$GITHUB_OUTPUT"
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.release.tag_name || 'gennearaccount-tag' }}
+          files: ${{ steps.deb.outputs.path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

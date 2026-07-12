@@ -1,0 +1,35 @@
+name: Repo About
+
+on:
+  workflow_dispatch:
+
+permissions:
+  administration: write
+
+jobs:
+  update-about:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set description and website
+        run: |
+          gh api \
+            --method PATCH \
+            repos/${{ github.repository }} \
+            -f description='Generate NEAR implicit accounts for IdentyClaw Passport enrollment' \
+            -f homepage='https://www.discernible.io/#enroll'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set topics
+        run: |
+          gh api \
+            --method PUT \
+            repos/${{ github.repository }}/topics \
+            -f names[]='near' \
+            -f names[]='identyclaw' \
+            -f names[]='ed25519' \
+            -f names[]='cli' \
+            -f names[]='enrollment' \
+            -H 'Accept: application/vnd.github.mercy-preview+json'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
