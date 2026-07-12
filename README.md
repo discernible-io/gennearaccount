@@ -1,7 +1,5 @@
 # NEAR implicit account generator
 
-![banner](banner.png)
-
 **Step 1 of [IdentyClaw](https://www.discernible.io/#enroll) enrollment:** create a NEAR implicit account with this CLI, then mint a Passport at [purchase.identyclaw.com](https://purchase.identyclaw.com).
 
 The `gennearaccount` tool writes a JSON key file and prints the new implicit account id on standard output.
