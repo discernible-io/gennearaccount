@@ -87,3 +87,9 @@ This project is released under the [GPLv2](COPYING).
 ---
 
 [discernible.io](https://www.discernible.io) · [sdk/verify-hola](https://github.com/discernible-io/sdk/tree/main/verify-hola) · [enrollment guide](https://www.discernible.io/#enroll)
+
+<!-- discernible-io:product-links -->
+---
+
+[discernible.io](https://www.discernible.io/) · [Get a Passport](https://purchase.identyclaw.com) · [Verify HOLA](https://verify.identyclaw.com)
+<!-- /discernible-io:product-links -->
