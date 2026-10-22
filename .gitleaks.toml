@@ -1,0 +1,4 @@
+title = "gennearaccount gitleaks config"
+
+[extend]
+useDefault = true
